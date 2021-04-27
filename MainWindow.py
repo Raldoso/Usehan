@@ -7,35 +7,49 @@ import os
 app = QApplication(sys.argv)
 dirpath = os.path.dirname(__file__)
 
+class Color(QWidget):  #custom widget
+    def __init__(self, color):
+        super().__init__()
+        self.setAutoFillBackground(True)
+        self.resize(30,30)
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor(color))
+        self.setPalette(palette)
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("My App")
         #self.setWindowFlags(Qt.FramelessWindowHint)
+        self.LayoutInit()
+        self.WindowFilling()
 
-        #LAYOUT INITIALISATIOn
-        rootLayout = QVBoxLayout()
-        rootLayout.setContentsMargins(0,0,0,0)
-        rootLayout.setSpacing(0)
+    def LayoutInit(self):
+        
+        self.rootLayout = QVBoxLayout()
+        self.rootLayout.setContentsMargins(0,0,0,0)
+        self.rootLayout.setSpacing(0)
 
-        titleLayout = QHBoxLayout()
-        titleLayout.setContentsMargins(0,0,0,0) 
-        titleLayout.setSpacing(0)
-        titleLayout.setAlignment(Qt.AlignRight)
+        self.titleLayout = QHBoxLayout()
+        self.titleLayout.setContentsMargins(0,0,0,0)
+        self.titleLayout.setSpacing(0)
+        self.titleLayout.setAlignment(Qt.AlignRight)
 
-        contentLayout = QHBoxLayout()
-        contentLayout.setContentsMargins(0,0,0,0)
-        contentLayout.setSpacing(0)
+        self.contentLayout = QHBoxLayout()
+        self.contentLayout.setContentsMargins(0,0,0,0)
+        self.contentLayout.setSpacing(0)
 
-        tabLayout = QVBoxLayout()
-        tabLayout.setContentsMargins(0,0,0,0)
-        tabLayout.setSpacing(0)
-        tabLayout.setAlignment(Qt.AlignTop)
+        self.tabLayout = QVBoxLayout()
+        self.tabLayout.setContentsMargins(0,0,0,0)
+        self.tabLayout.setSpacing(0)
+        self.tabLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
-        SessionLayout = QVBoxLayout()
-        SessionLayout.setContentsMargins(0,0,0,0)
-        SessionLayout.setSpacing(0)
-        SessionLayout.setAlignment(Qt.AlignTop)
+        self.SessionLayout = QVBoxLayout()
+        self.SessionLayout.setContentsMargins(0,0,0,0)
+        self.SessionLayout.setSpacing(0)
+        self.SessionLayout.setAlignment(Qt.AlignTop)
+
+    def WindowFilling(self):
 
         #SESSION VIEW
         session1 = QPushButton()
@@ -49,29 +63,32 @@ class Window(QMainWindow):
         session2.clicked.connect(self.pressed)
         session2.setProperty("sessionbutton","true")
 
-        SessionLayout.addWidget(session1)
-        SessionLayout.addWidget(session2)
+        self.SessionLayout.addWidget(session1)
+        self.SessionLayout.addWidget(session2)
+        self.SessionLayout.addWidget(Color("red"))
 
         Sessions = QWidget()
-        Sessions.setProperty("SessionLayout","true")
-        Sessions.setLayout(SessionLayout)
+        Sessions.setProperty("self.SessionLayout","true")
+        Sessions.setLayout(self.SessionLayout)
 
         #TAB VIEW
         search = QLineEdit()
         search.setProperty("searchbar","true")
 
-        tabLayout.addWidget(search)
-        tabLayout.addWidget(Sessions)
+        self.tabLayout.addWidget(search)
+        self.tabLayout.addWidget(Sessions)
 
         tabs = QWidget()
-        tabs.setLayout(tabLayout)
+        tabs.setProperty("tabs","true")
+        tabs.setLayout(self.tabLayout)
 
         #CONTENT VIEW
-        contentLayout.addWidget(tabs)
-        
+        self.contentLayout.addWidget(tabs)
+        self.contentLayout.addWidget(QPushButton())
+
         content = QWidget()
         content.setProperty("content","true")
-        content.setLayout(contentLayout)
+        content.setLayout(self.contentLayout)
 
         #TITLEBAR VIEW
         exitbutton = QPushButton()
@@ -79,19 +96,18 @@ class Window(QMainWindow):
         exitbutton.clicked.connect(lambda: sys.exit())
         exitbutton.setProperty("exit","true")
 
-        titleLayout.addWidget(exitbutton)
+        self.titleLayout.addWidget(exitbutton)
 
         title = QWidget()
         title.setProperty("titlebar","true")
-        title.setLayout(titleLayout)
+        title.setLayout(self.titleLayout)
 
         #ROOT VIEW
-        rootLayout.addWidget(title)
-        rootLayout.addWidget(content)
+        self.rootLayout.addWidget(title)
+        self.rootLayout.addWidget(content)
 
         root = QWidget()
-        #root = QSizeGrip(self)
-        root.setLayout(rootLayout)
+        root.setLayout(self.rootLayout)
 
         #END
         self.setCentralWidget(root)
@@ -101,9 +117,9 @@ class Window(QMainWindow):
         print(f"hello")
 
 #Apply stylesheet
-file = open(os.path.join(dirpath,"style.qss"),"r")
-file = file.read()
-app.setStyleSheet(file)
+style1 = open(os.path.join(dirpath,"QSS","widgets.qss"),"r").read()
+style2 = open(os.path.join(dirpath,"QSS","layouts.qss"),"r").read()
+app.setStyleSheet(style1 + style2)
 
 window = Window()
 window.show()
