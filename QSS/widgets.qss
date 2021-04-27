@@ -1,0 +1,51 @@
+QPushButton[sessionbutton="true"] {
+    max-width: 120px;
+    min-width: 120px;
+    max-height: 40px;
+    min-height: 40px;
+
+    margin: 5px;
+    border-radius: 20px;
+
+    color: #E6F0D1;
+    font-weight: bold;
+    font-family: Eras Bold ITC;
+    font-size: 20px;
+
+    background-color: #779A32;
+}
+QPushButton[sessionbutton="true"]:pressed {
+    background-color: #6B8B2D;
+}
+QPushButton[sessionbutton="true"]:hover {
+    border: 3px solid #E6F0D1;
+}
+QLineEdit[searchbar="true"] {
+    max-width: 120px;
+    min-width: 120px;
+    max-height: 30px;
+    min-height: 30px;
+
+    margin: 5px;
+
+    color: #E6F0D1;
+    font-family: Eras Bold ITC;
+    font-size: 20px;
+    background-color: #181F0A;
+
+    border: 0px;
+}
+
+QPushButton[exit="true"]{
+    max-width: 40px;
+    min-width: 40px;
+    max-height: 40px;
+    min-height: 40px;
+
+    color: #E6F0D1;
+    font-weight: bold;
+    font-family: Eras Bold ITC;
+    font-size: 20px;
+
+    background-color: #779A32;
+}
