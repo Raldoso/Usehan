@@ -49,3 +49,6 @@ QPushButton[exit="true"]{
 
     background-color: #779A32;
 }
+QPushButton[exit="true"]:hover {
+    border: 3px solid #E6F0D1;
+}

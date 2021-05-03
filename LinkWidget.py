@@ -1,12 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from functions import relpath
 import sys
-import os
-
-def relpath(path): #working with relatve paths with origin main script
-    dirpath = os.path.dirname(__file__)
-    return os.path.join(dirpath,path)
 
 class Link_container(QWidget):
     def __init__(self,iconpath:str,titletext:str,linktext:str):
@@ -14,11 +10,6 @@ class Link_container(QWidget):
         self.iconpath = iconpath
         self.titletext = titletext
         self.linktext = linktext
-        self.container = QHBoxLayout()
-
-        self.container.setContentsMargins(0,0,0,0)
-        self.container.setSpacing(0)
-        
 
         self.setStyleSheet("""
             QWidget{
@@ -28,7 +19,12 @@ class Link_container(QWidget):
                 min-width: 450px;*/
             } """)
 
-        self.icon = self.ImageInit(self.iconpath,30)
+        self.container = QHBoxLayout()
+        self.container.setContentsMargins(0,0,0,0)
+        self.container.setSpacing(0)
+
+        self.icon = self.IconInit(self.iconpath,30)
+
         self.title = QLineEdit()
         self.title.setStyleSheet(""" 
             QLineEdit{
@@ -50,14 +46,12 @@ class Link_container(QWidget):
         self.title.setText(self.titletext)
         self.title.setReadOnly(True)
 
-    
         self.container.addWidget(self.icon)
         self.container.addWidget(self.title)
 
-
         self.setLayout(self.container)
 
-    def ImageInit(self,path,heigth): #returns a QLabel with resized image
+    def IconInit(self,path,heigth): #returns a QLabel with resized image
 
         image = QLabel()
         icon = QPixmap(path)
@@ -65,6 +59,12 @@ class Link_container(QWidget):
         image.setPixmap(icon)
 
         return image
+
+    def mouseDoubleClickEvent(self,*args):  #make 
+        self.title.setReadOnly(False)
+
+
+
 
 class valami(QMainWindow):
     def __init__(self):
@@ -74,8 +74,8 @@ class valami(QMainWindow):
 
         layout.addWidget(Link_container(
             relpath(r"Images\Trash.png"),
-            "Qt learn",
-            "www.google.com"
+            "Qt Style Sheets | Qt Widgets 5.15.3",
+            "https://doc.qt.io/qt-5/stylesheet.html"
         ))
         widget = QWidget()
         widget.setLayout(layout)
