@@ -1,12 +1,9 @@
 import os
 
-DIRPATH = os.path.dirname(__file__)
-import os
-from functions import relpath
-
 
 DIRPATH = os.path.dirname(__file__)
-DELETE_URL = relpath(r"Images\Trash.png")
-SESSION_SETTINGS = relpath(r"Images\SessionSettings.png")
-CHECK_URL = relpath(r"Images\CheckURL.png")
-UNCHECK_URL = relpath(r"Images\UnCheckURL.png")
+DELETE_URL = os.path.join(DIRPATH,r"Images\jokuka.png")
+SESSION_SETTINGS = os.path.join(DIRPATH,r"Images\SessionSettings.png")
+CHECK_URL = os.path.join(DIRPATH,r"Images\csek3.png")
+UNCHECK_URL = os.path.join(DIRPATH,r"Images\uncsek4.png")
+WINDOW_ICON = os.path.join(DIRPATH,r"Images\windowicon.png")
