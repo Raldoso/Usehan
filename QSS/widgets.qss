@@ -9,7 +9,6 @@ QPushButton[sessionbutton="true"] {
 
     color: #E6F0D1;
     font-weight: bold;
-    font-family: Eras Bold ITC;
     font-size: 20px;
 
     background-color: #779A32;
@@ -21,8 +20,8 @@ QPushButton[sessionbutton="true"]:hover {
     border: 3px solid #E6F0D1;
 }
 QLineEdit[searchbar="true"] {
-    max-width: 120px;
-    min-width: 120px;
+    /* max-width: 120px;
+    min-width: 120px; */
     max-height: 30px;
     min-height: 30px;
 

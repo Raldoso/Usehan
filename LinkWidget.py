@@ -1,13 +1,44 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from functions import relpath
+from functions import relpath, hash_title
+from constanst import *
 import sys
+import json
 
-class Link_container(QWidget):
-    def __init__(self,iconpath:str,titletext:str,linktext:str):
+class TitleEdit(QLineEdit):
+    def __init__(self,title:str):
         super().__init__()
-        self.iconpath = iconpath
+
+        self.title = title
+        self.setStyleSheet(""" 
+            QLineEdit{
+                border: 0px;
+                max-height: 30px;
+                min-width: 250px;
+                color: black;
+                font-size: 20px;
+                background-color: white;
+            } 
+            QLineEdit:read-only{
+                color: #E6F0D1;
+                background-color: #779A32;
+            } """)
+        self.setText(self.title)
+        self.setReadOnly(True)
+        self.returnPressed.connect(self.TitleChanged)
+
+    def mouseDoubleClickEvent(self, event): #make the title editable
+        if self.isReadOnly() == True:
+            self.setReadOnly(False)
+
+    def TitleChanged(self): #return to uneditable mode with the edited title
+        self.setReadOnly(True)
+        print(self.text())
+        
+class Link_container(QWidget):
+    def __init__(self,titletext:str,linktext:str):
+        super().__init__()
         self.titletext = titletext
         self.linktext = linktext
 
@@ -15,75 +46,80 @@ class Link_container(QWidget):
             QWidget{
                 background-color: #779A32;
                 max-height: 30px;
-                /*min-height: 30px;
-                min-width: 450px;*/
-            } """)
+                min-height: 30px;
+            } 
+            QPushButton{
+                max-width: 30px;
+                min-width: 30px;
+            }""")
 
         self.container = QHBoxLayout()
         self.container.setContentsMargins(0,0,0,0)
         self.container.setSpacing(0)
 
-        self.icon = self.IconInit(self.iconpath,30)
+        self.icon = self.IconInit(30)
+        self.icon.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.title = QLineEdit()
-        self.title.setStyleSheet(""" 
-            QLineEdit{
-                border: 0px;
-                max-height: 30px;
-                color: black;
-                font-family: Eras Bold ITC;
-                font-size: 20px;
-                background-color: white;
-            } 
-            QLineEdit:read-only{
-                border: 0px;
-                max-height: 30px;
-                color: #E6F0D1;
-                font-family: Eras Bold ITC;
-                font-size: 20px;
-                background-color: #779A32;
-            } """)
-        self.title.setText(self.titletext)
-        self.title.setReadOnly(True)
+        self.title = TitleEdit(self.titletext)
+
+        self.check = QPushButton()
+        self.check.setCheckable(True)
+        self.check.setIcon(QIcon(CHECK_URL))
+        self.check.setIconSize(QSize(30,30))
+
+        self.delete = QPushButton()
+        self.delete.setIcon(QIcon(DELETE_URL))
+        self.delete.setIconSize(QSize(30,30))
 
         self.container.addWidget(self.icon)
         self.container.addWidget(self.title)
+        self.container.addWidget(self.check)
+        self.container.addWidget(self.delete)
 
         self.setLayout(self.container)
 
-    def IconInit(self,path,heigth): #returns a QLabel with resized image
+    def IconInit(self,heigth): #returns a QLabel with resized image
 
         image = QLabel()
-        icon = QPixmap(path)
+        iconpath = relpath(r"icons\{0}.png".format(hash_title(self.titletext)))
+
+        #set basic icon for not downloadable url icon images
+        if os.path.exists(iconpath) == False:
+            iconpath = relpath(LOAD_NO_ICON)
+            
+        icon = QPixmap(iconpath)
         icon = icon.scaledToHeight(heigth)
         image.setPixmap(icon)
 
         return image
 
-    def mouseDoubleClickEvent(self,*args):  #make 
-        self.title.setReadOnly(False)
 
 
+if __name__ == "__main__":
+    class valami(QMainWindow):
+        def __init__(self):
+            super().__init__()
+            layout = QVBoxLayout()
+            layout.setAlignment(Qt.AlignTop)
+
+            data = json.load(open(relpath("links.json"),"r"))
+
+            data = data["Github"]
+
+            for i in data:
+                layout.addWidget(Link_container(i["title"],i["url"]))
+
+            widget = QWidget()
+            widget.setStyleSheet(""" 
+                QWidget{
+                    background-color: #181F0A;
+                } """)
+            widget.setLayout(layout)
+            self.setCentralWidget(widget)
 
 
-class valami(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignTop)
+    app = QApplication(sys.argv)
 
-        layout.addWidget(Link_container(
-            relpath(r"Images\Trash.png"),
-            "Qt Style Sheets | Qt Widgets 5.15.3",
-            "https://doc.qt.io/qt-5/stylesheet.html"
-        ))
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
-
-
-app = QApplication(sys.argv)
-
-window = valami()
-window.show()
-app.exec_()
+    window = valami()
+    window.show()
+    app.exec_()

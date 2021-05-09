@@ -1,0 +1,30 @@
+{
+    "Github": [
+        {
+            "url": "https://www.dataschool.io/how-to-contribute-on-github/",
+            "title": "Step-by-step guide to contributing on GitHub"
+        },
+        {
+            "url": "https://nicolasbarral.fr/git-novice/08-collab/",
+            "title": "Version Control with Git: Collaborating"
+        },
+        {
+            "url": "https://docs.github.com/en/github/getting-started-with-github/why-is-git-always-asking-for-my-password",
+            "title": "Why is Git always asking for my password? - GitHub Docs"
+        }
+    ],
+    "Buy keyboard": [
+        {
+            "url": "https://boardsource.xyz/store",
+            "title": "Boardsource - Store"
+        },
+        {
+            "url": "https://mechboards.co.uk/",
+            "title": "Home - Mechboards"
+        },
+        {
+            "url": "https://www.solutionsinplastic.com/keycap-manufacturing/",
+            "title": "Keycap Manufacturing – Signature Plastics"
+        }
+    ]
+}
