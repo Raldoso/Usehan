@@ -34,12 +34,12 @@ class Window(QMainWindow):
         self.tabLayout = QVBoxLayout()
         self.tabLayout.setContentsMargins(0,0,0,0)
         self.tabLayout.setSpacing(0)
-        self.tabLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        self.tabLayout.setAlignment(Qt.AlignTop)
 
         self.SessionLayout = QVBoxLayout()
         self.SessionLayout.setContentsMargins(0,0,0,0)
         self.SessionLayout.setSpacing(0)
-        self.SessionLayout.setAlignment(Qt.AlignTop)
+        self.SessionLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
     def WindowFilling(self):
 
