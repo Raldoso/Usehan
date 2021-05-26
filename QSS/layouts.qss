@@ -3,8 +3,8 @@ QMainWindow {
 }
 QWidget[SessionLayout="true"] {
     background-color: #40531B;
-    max-width: 150px;
-    min-width: 150px;
+    max-width: 190;
+    min-width: 190;
 }
 QWidget[titlebar="true"] {
     background-color: #40531B;
@@ -16,6 +16,6 @@ QWidget[content="true"]{
 }
 QWidget[tabs="true"]{
     background-color: #40531B;
-    max-width: 150px;
-    min-width: 150px;
+    max-width: 190;
+    min-width: 190;
 }
