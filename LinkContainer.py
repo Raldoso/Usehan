@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from functions import relpath, hash_title
-from constanst import *
+from modules.functions import *
 import sys
-import json
+
 
 class TitleEdit(QLineEdit):
     def __init__(self,title:str):
@@ -35,12 +34,14 @@ class TitleEdit(QLineEdit):
     def TitleChanged(self): #return to uneditable mode with the edited title
         self.setReadOnly(True)
         print(self.text())
-        
+
 class Link_container(QWidget):
     def __init__(self,titletext:str,linktext:str):
         super().__init__()
         self.titletext = titletext
         self.linktext = linktext
+        
+        self.setWindowFlags(Qt.FramelessWindowHint)
 
         self.setStyleSheet("""
             QWidget{
@@ -54,10 +55,10 @@ class Link_container(QWidget):
             }""")
 
         self.container = QHBoxLayout()
-        self.container.setContentsMargins(0,0,0,0)
         self.container.setSpacing(0)
+        self.container.setContentsMargins(20,0,20,0)
 
-        self.icon = self.IconInit(30)
+        self.icon = self.IconInit()
         self.icon.setAttribute(Qt.WA_TranslucentBackground)
 
         self.title = TitleEdit(self.titletext)
@@ -78,17 +79,16 @@ class Link_container(QWidget):
 
         self.setLayout(self.container)
 
-    def IconInit(self,heigth): #returns a QLabel with resized image
+    def IconInit(self): #returns a QLabel with resized image
 
         image = QLabel()
-        iconpath = relpath(r"icons\{0}.png".format(hash_title(self.titletext)))
+        iconpath = relpath(r"icons\{0}.png".format(hash_title(self.titletext))) #get filepath by title hash
 
         #set basic icon for not downloadable url icon images
         if os.path.exists(iconpath) == False:
             iconpath = relpath(LOAD_NO_ICON)
             
         icon = QPixmap(iconpath)
-        icon = icon.scaledToHeight(heigth)
         image.setPixmap(icon)
 
         return image
@@ -99,12 +99,13 @@ if __name__ == "__main__":
     class valami(QMainWindow):
         def __init__(self):
             super().__init__()
+
             layout = QVBoxLayout()
             layout.setAlignment(Qt.AlignTop)
 
-            data = json.load(open(relpath("links.json"),"r"))
+            data = json.load(open(DATABASE,"r"))
 
-            data = data["Github"]
+            data = data["Embedd Python"]
 
             for i in data:
                 layout.addWidget(Link_container(i["title"],i["url"]))

@@ -1,19 +1,24 @@
+from LinkContainer import Link_container
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from functions import *
+from modules.functions import *
 import sys
 
 app = QApplication(sys.argv)
-
+data = json.load(open(DATABASE,"r"))
 
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
+
         self.setWindowTitle("My App")
         #self.setWindowFlags(Qt.FramelessWindowHint)
+        self.buttons = []
+
         self.LayoutInit()
-        self.WindowFilling()
+        self.initUI()
+        self.initSession()
 
     def LayoutInit(self):
         
@@ -24,7 +29,6 @@ class Window(QMainWindow):
         self.titleLayout = QHBoxLayout()
         self.titleLayout.setContentsMargins(0,0,0,0)
         self.titleLayout.setSpacing(0)
-        self.titleLayout.setAlignment(Qt.AlignRight)
 
         self.contentLayout = QHBoxLayout()
         self.contentLayout.setContentsMargins(0,0,0,0)
@@ -41,24 +45,24 @@ class Window(QMainWindow):
         self.SessionLayout.setSpacing(0)
         self.SessionLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
-    def WindowFilling(self):
+        self.contentRootLayout = QVBoxLayout()
+        self.contentRootLayout.setContentsMargins(0,0,0,0)
+        self.contentRootLayout.setSpacing(0)
+        self.contentRootLayout.setAlignment(Qt.AlignTop)
+
+        self.contentTitleLayout = QVBoxLayout()
+        self.contentTitleLayout.setContentsMargins(0,0,0,0)
+        self.contentTitleLayout.setSpacing(0)
+        self.contentTitleLayout.setAlignment(Qt.AlignLeft)
+        
+        self.contentLinkLayout = QVBoxLayout()
+        self.contentLinkLayout.setContentsMargins(0,0,0,0)
+        self.contentLinkLayout.setSpacing(5)
+        self.contentLinkLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+
+    def initUI(self):
 
         #SESSION VIEW
-        session1 = QPushButton()
-        session1.setText("Learn Qt")
-        session1.clicked.connect(self.pressed)
-        session1.setProperty("sessionbutton","true")
-        session1.setCheckable(True)
-
-        session2 = QPushButton()
-        session2.setText("Github")
-        session2.clicked.connect(self.pressed)
-        session2.setProperty("sessionbutton","true")
-
-        self.SessionLayout.addWidget(session1)
-        self.SessionLayout.addWidget(session2)
-        #self.SessionLayout.addWidget(Color("red"))
-
         Sessions = QWidget()
         Sessions.setProperty("self.SessionLayout","true")
         Sessions.setLayout(self.SessionLayout)
@@ -74,8 +78,45 @@ class Window(QMainWindow):
         tabs.setProperty("tabs","true")
         tabs.setLayout(self.tabLayout)
 
+        #CONTENT TITLE VIEW
+        
+        launch = QPushButton()
+        launch.setText("Launch")
+        launch.setStyleSheet("""
+            QPushButton{
+                max-width: 140px;
+                min-width: 140px;
+                max-height: 40px;
+                min-height: 40px;
+                background-color: #deeb34;
+                border-top-left-radius: 20px;
+                border-bottom-left-radius: 20px;
+                font: bold 25px;
+                color: #181F0A;
+                margin-top: 15px;
+                margin-left: 20px;
+                margin-bottom: 20px;
+                }""")
+
+        self.contentTitleLayout.addWidget(launch)
+
+        contentTitle = QWidget()
+        contentTitle.setLayout(self.contentTitleLayout)
+        #CONTENT LINK VIEW
+
+        contentLink = QWidget()
+        contentLink.setLayout(self.contentLinkLayout)
+
+        #CONTENT ROOT VIEWű
+        self.contentRootLayout.addWidget(contentTitle)
+        self.contentRootLayout.addWidget(contentLink)
+
+        contentRoot = QWidget()
+        contentRoot.setLayout(self.contentRootLayout)
+
         #CONTENT VIEW
         self.contentLayout.addWidget(tabs)
+        self.contentLayout.addWidget(contentRoot)
 
         content = QWidget()
         content.setProperty("content","true")
@@ -83,10 +124,12 @@ class Window(QMainWindow):
 
         #TITLEBAR VIEW
         titletext = QLabel()
-        #titletext.setAlignment(Qt.AlignRight)
         titletext.setStyleSheet(""" 
             QLabel {
-                border: 3px solid #222222 
+                color: #E6F0D1;
+                margin-left: 5px;
+                font-size: 30px;
+                font-weight: bold;
                 }""")
         titletext.setText("Usehan")
 
@@ -97,6 +140,8 @@ class Window(QMainWindow):
 
         self.titleLayout.addWidget(titletext)
         self.titleLayout.addWidget(exitbutton)
+        self.titleLayout.setAlignment(titletext,Qt.AlignLeft)
+        self.titleLayout.setAlignment(Qt.AlignVCenter)
 
         title = QWidget()
         title.setProperty("titlebar","true")
@@ -129,9 +174,50 @@ class Window(QMainWindow):
         self.offset = None
         super().mouseReleaseEvent(event)
 
-    def pressed(self):
-        print(f"hello")
 
+    def resizeEvent(self, event):
+        print(event)
+
+        
+    #READ DATA FROM DAATBASE AND SHOW IT
+    def initSession(self):
+        data = json.load(open(DATABASE,"r"))
+        titles = [title for title in data.keys()]
+        titles.sort()
+
+        for title in titles:
+            if len(title) > 14:
+                print(f"Session name must be less than 14 characters: {title}")
+                sys.exit()
+            button = QPushButton(title,self)
+            button.setCheckable(True)
+            button.clicked.connect(self.clickeds)
+            button.setProperty("sessionbutton","true")
+            self.SessionLayout.addWidget(button)
+            self.buttons.append(button)
+
+    def clickeds(self):
+
+        sender = self.sender()
+        title = sender.text()
+        links = data[title]
+
+        #sessionbuttom style change
+        if sender.isChecked():
+            for i in self.buttons:
+                i.setChecked(False)
+        sender.setChecked(True)
+
+        #clear layout
+        for i in reversed(range(self.contentLinkLayout.count())): 
+            self.contentLinkLayout.itemAt(i).widget().setParent(None)
+
+        #paste new session links
+        for link in links:
+            self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"]))
+
+
+        
 
 
 #Apply stylesheet
