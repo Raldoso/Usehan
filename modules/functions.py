@@ -23,8 +23,10 @@ CHECK_URL = os.path.join(DIRPATH,r"Images\csek3.png")
 UNCHECK_URL = os.path.join(DIRPATH,r"Images\uncsek4.png")
 WINDOW_ICON = os.path.join(DIRPATH,r"Images\windowicon.png")
 LOAD_NO_ICON = os.path.join(DIRPATH,r"Images\noload2.png")
-ALL_LINK_TICK = os.path.join(DIRPATH,r"Images\alltick.png")
-ALL_LINK_UNTICK = os.path.join(DIRPATH,r"Images\noalltick.png")
+LAUNCH_LINK = os.path.join(DIRPATH,r"Images\alltick.png")
+NOT_LAUNCH_LINK = os.path.join(DIRPATH,r"Images\noalltick.png")
+LAUNCH_LINK_HOVER = os.path.join(DIRPATH,r"Images\tikboxhover.png")
+NOT_LAUNCH_LINK_HOVER = os.path.join(DIRPATH,r"Images\notikboxhover.png")
 DATABASE = os.path.join(DIRPATH,r"links.json")
 ICON_DATABASE = os.path.join(DIRPATH,r"icons")
 
@@ -44,7 +46,6 @@ def get_url_title(website_url:str) -> str:
     # displaying the title
     return soup.title.get_text()
 
-@snoop
 def download_url_icon(website_url:str) -> None:
     #donwloading the icon of a website by its URL.
     #Possible formats are PNG, ICO
@@ -141,8 +142,6 @@ if __name__ == '__main__':
         for lin in i:
             download_url_icon(lin["url"])
             print("Downloaded") """
-
-    print(get_url_title("https://www.analyticsvidhya.com/blog/2021/03/beginners-guide-to-regular-expressions-in-natural-language-processing/"))
 
 
 

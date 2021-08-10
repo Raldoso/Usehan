@@ -5,13 +5,18 @@ The database during open time is always open in a python dictionary object reduc
 Future plan is implementing a paralell process that saves the informations in fixed time intervals.
 """
 
+from dataclasses import dataclass
+
+@dataclass
 class LinkSettings():
-    pass
+    launcable = False
 
-
+@dataclass
 class SessionSettings():
-    pass
-
-
+    launchAtStartup: bool
+    browser: str
+    activeWindow: str
+@dataclass
 class AppSettings():
-    pass
+    launchAtStartup: bool
+    theme: str

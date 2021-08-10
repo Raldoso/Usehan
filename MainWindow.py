@@ -3,18 +3,32 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from modules.functions import *
 from modules.custom_widgets.LinkContainer import Link_container
+from modules.custom_widgets.resize_grid import SideGrip
 import sys
 
 app = QApplication(sys.argv)
 data = json.load(open(DATABASE,"r"))
 
 class Window(QMainWindow):
+    #_gripSize = 1
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("My App")
-        #self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.FramelessWindowHint)
         self.buttons = []
+
+        self.gripSize = 4
+        self.sideGrips = [
+            SideGrip(self, Qt.LeftEdge), 
+            SideGrip(self, Qt.TopEdge), 
+            SideGrip(self, Qt.RightEdge), 
+            SideGrip(self, Qt.BottomEdge), 
+        ]
+        # corner grips should be "on top" of everything, otherwise the side grips
+        # will take precedence on mouse events, so we are adding them *after*;
+        # alternatively, widget.raise_() can be used
+        self.cornerGrips = [QSizeGrip(self) for i in range(4)]
 
         self.LayoutInit()
         self.initUI()
@@ -81,6 +95,7 @@ class Window(QMainWindow):
         #CONTENT TITLE VIEW
         
         launch = QPushButton()
+        launch.clicked.connect(self.launch)
         launch.setText("Launch")
         launch.setStyleSheet("""
             QPushButton{
@@ -104,6 +119,7 @@ class Window(QMainWindow):
 
         #TODO fix url
         sessionSettings = QPushButton()
+        sessionSettings.setCheckable(False)
         sessionSettings.setStyleSheet("""
             QPushButton{
                 max-height: 40px; 
@@ -182,6 +198,7 @@ class Window(QMainWindow):
 
     #DETECT WINDOW POSITION WHEN MOUSE PRESSED
     def mousePressEvent(self, event):
+        print(QApplication.focusWidget().text())
         if event.button() == Qt.LeftButton:
             self.offset = event.pos()
         else:
@@ -197,14 +214,10 @@ class Window(QMainWindow):
         self.offset = None
         super().mouseReleaseEvent(event)
 
-    def resizeEvent(self, event):
-        #print(event)
-        pass
-
         
     #READ DATA FROM DAATBASE AND SHOW IT
     def initSession(self):
-        data = json.load(open(DATABASE,"r"))
+
         titles = [title for title in data.keys()]
         titles.sort()
 
@@ -212,14 +225,15 @@ class Window(QMainWindow):
             if len(title) > 14:
                 print(f"Session name must be less than 14 characters: {title}")
                 sys.exit()
-            button = QPushButton(title,self)
-            button.setCheckable(True)
-            button.clicked.connect(self.clickeds)
-            button.setProperty("sessionbutton","true")
-            self.SessionLayout.addWidget(button)
-            self.buttons.append(button)
+            else:
+                button = QPushButton(title,self)
+                button.setCheckable(True)
+                button.clicked.connect(self.session_clicked)
+                button.setProperty("sessionbutton","true")
+                self.SessionLayout.addWidget(button)
+                self.buttons.append(button)
 
-    def clickeds(self):
+    def session_clicked(self):
 
         sender = self.sender()
         title = sender.text()
@@ -232,15 +246,64 @@ class Window(QMainWindow):
         sender.setChecked(True)
 
         #clear layout
-        for i in reversed(range(self.contentLinkLayout.count())): 
+        for i in reversed(range(self.contentLinkLayout.count())):
             self.contentLinkLayout.itemAt(i).widget().setParent(None)
 
         #paste new session links
         for link in links:
             self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"],session = title,database= data))
 
+    def launch(self):
+        for i in reversed(range(self.contentLinkLayout.count())):
+            if self.contentLinkLayout.itemAt(i).widget().launchable:
+                webbrowser.open(self.contentLinkLayout.itemAt(i).widget().linktext,new=0, autoraise=True)
 
-        
+    def setGripSize(self, size):
+        if size == self._gripSize:
+            return
+        self._gripSize = max(2, size)
+        self.updateGrips()
+    def updateGrips(self):
+        self.setContentsMargins(*[self.gripSize] * 4)
+
+        outRect = self.rect()
+        # an "inner" rect used for reference to set the geometries of size grips
+        inRect = outRect.adjusted(self.gripSize, self.gripSize,
+            -self.gripSize, -self.gripSize)
+
+        # top left
+        self.cornerGrips[0].setGeometry(
+           QRect(outRect.topLeft(), inRect.topLeft()))
+        # top right
+        self.cornerGrips[1].setGeometry(
+           QRect(outRect.topRight(), inRect.topRight()).normalized())
+        # bottom right
+        self.cornerGrips[2].setGeometry(
+           QRect(inRect.bottomRight(), outRect.bottomRight()))
+        # bottom left
+        self.cornerGrips[3].setGeometry(
+           QRect(outRect.bottomLeft(), inRect.bottomLeft()).normalized())
+
+        # left edge
+        self.sideGrips[0].setGeometry(
+            0, inRect.top(), self.gripSize, inRect.height())
+        # top edge
+        self.sideGrips[1].setGeometry(
+            inRect.left(), 0, inRect.width(), self.gripSize)
+        # right edge
+        self.sideGrips[2].setGeometry(
+            inRect.left() + inRect.width(), 
+            inRect.top(), self.gripSize, inRect.height())
+        # bottom edge
+        self.sideGrips[3].setGeometry(
+            self.gripSize, inRect.top() + inRect.height(), 
+            inRect.width(), self.gripSize)
+    def resizeEvent(self, event):
+        QMainWindow.resizeEvent(self, event)
+        self.updateGrips()
+
+
+         
 
 
 #Apply stylesheet
