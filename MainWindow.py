@@ -1,8 +1,8 @@
-from LinkContainer import Link_container
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from modules.functions import *
+from modules.custom_widgets.LinkContainer import Link_container
 import sys
 
 app = QApplication(sys.argv)
@@ -50,7 +50,7 @@ class Window(QMainWindow):
         self.contentRootLayout.setSpacing(0)
         self.contentRootLayout.setAlignment(Qt.AlignTop)
 
-        self.contentTitleLayout = QVBoxLayout()
+        self.contentTitleLayout = QHBoxLayout()
         self.contentTitleLayout.setContentsMargins(0,0,0,0)
         self.contentTitleLayout.setSpacing(0)
         self.contentTitleLayout.setAlignment(Qt.AlignLeft)
@@ -93,12 +93,35 @@ class Window(QMainWindow):
                 border-bottom-left-radius: 20px;
                 font: bold 25px;
                 color: #181F0A;
-                margin-top: 15px;
-                margin-left: 20px;
-                margin-bottom: 20px;
+                margin: 15 8 20 20;
+                }
+            QPushButton:pressed{
+                background-color: #FFBF1F;
+            }
+            QPushButton:hover{
+                border: 3px solid #E6F0D1;
                 }""")
 
+        #TODO fix url
+        sessionSettings = QPushButton()
+        sessionSettings.setStyleSheet("""
+            QPushButton{
+                max-height: 40px; 
+                min-height: 40px;
+                max-width: 40px;
+                min-width: 40px;
+                border-top-right-radius: 20px;
+                border-bottom-right-radius: 20px;
+                margin: 15 0 20 8;
+                background: #779A32 url(C:/Users/borhe/Downloads/ItWork/Projects/Usehan/Usehan/Images/settings3.png) no-repeat center center;
+            }
+            QPushButton:hover {
+                background: #779A32 url(C:/Users/borhe/Downloads/ItWork/Projects/Usehan/Usehan/Images/settings3hover.png) no-repeat center center;
+            }
+        """)
+
         self.contentTitleLayout.addWidget(launch)
+        self.contentTitleLayout.addWidget(sessionSettings)
 
         contentTitle = QWidget()
         contentTitle.setLayout(self.contentTitleLayout)
@@ -107,7 +130,7 @@ class Window(QMainWindow):
         contentLink = QWidget()
         contentLink.setLayout(self.contentLinkLayout)
 
-        #CONTENT ROOT VIEWű
+        #CONTENT ROOT VIEW
         self.contentRootLayout.addWidget(contentTitle)
         self.contentRootLayout.addWidget(contentLink)
 
@@ -174,9 +197,9 @@ class Window(QMainWindow):
         self.offset = None
         super().mouseReleaseEvent(event)
 
-
     def resizeEvent(self, event):
-        print(event)
+        #print(event)
+        pass
 
         
     #READ DATA FROM DAATBASE AND SHOW IT
@@ -214,7 +237,7 @@ class Window(QMainWindow):
 
         #paste new session links
         for link in links:
-            self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"]))
+            self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"],session = title,database= data))
 
 
         

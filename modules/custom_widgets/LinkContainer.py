@@ -6,10 +6,13 @@ import sys
 
 
 class TitleEdit(QLineEdit):
-    def __init__(self,title:str):
+    def __init__(self,title:str,url:str,session:str,database=None):
         super().__init__()
 
         self.title = title
+        self.url = url
+        self.session = session
+        self.database = database
         self.setStyleSheet(""" 
             QLineEdit{
                 border: 0px;
@@ -28,18 +31,26 @@ class TitleEdit(QLineEdit):
         self.returnPressed.connect(self.TitleChanged)
 
     def mouseDoubleClickEvent(self, event): #make the title editable
+        self.oldtitle = self.title
         if self.isReadOnly() == True:
             self.setReadOnly(False)
 
     def TitleChanged(self): #return to uneditable mode with the edited title
         self.setReadOnly(True)
-        print(self.text())
+        self.title = self.text()
+
+        if self.title is not self.oldtitle:
+            modify_title(oldtitle=self.oldtitle,newtitle=self.title,session=self.session,database=self.database)
+
+
 
 class Link_container(QWidget):
-    def __init__(self,titletext:str,linktext:str):
+    def __init__(self,titletext:str,linktext:str,session:str,database=None):
         super().__init__()
         self.titletext = titletext
         self.linktext = linktext
+        self.session = session
+        self.database = database
         
         self.setWindowFlags(Qt.FramelessWindowHint)
 
@@ -61,12 +72,13 @@ class Link_container(QWidget):
         self.icon = self.IconInit()
         self.icon.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.title = TitleEdit(self.titletext)
+        self.title = TitleEdit(self.titletext,self.linktext,session=self.session,database=self.database)
 
         self.check = QPushButton()
         self.check.setCheckable(True)
         self.check.setIcon(QIcon(CHECK_URL))
         self.check.setIconSize(QSize(30,30))
+        self.check.clicked.connect(self.check_url)
 
         self.delete = QPushButton()
         self.delete.setIcon(QIcon(DELETE_URL))
@@ -82,7 +94,7 @@ class Link_container(QWidget):
     def IconInit(self): #returns a QLabel with resized image
 
         image = QLabel()
-        iconpath = relpath(r"icons\{0}.png".format(hash_title(self.titletext))) #get filepath by title hash
+        iconpath = relpath(r"icons\{0}.png".format(hash_title(self.linktext))) #get filepath by title hash
 
         #set basic icon for not downloadable url icon images
         if os.path.exists(iconpath) == False:
@@ -93,6 +105,14 @@ class Link_container(QWidget):
 
         return image
 
+    def check_url(self, url):
+        if self.check.isChecked():
+            self.title.setReadOnly(False)
+            self.title.setText(self.linktext)
+            
+        else:
+            self.title.setReadOnly(True)
+            self.title.setText(self.titletext)
 
 
 if __name__ == "__main__":

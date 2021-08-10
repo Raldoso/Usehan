@@ -22,13 +22,13 @@ QPushButton[sessionbutton="true"]:pressed:hover {
 QPushButton[sessionbutton="true"]:checked {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
+    background-color: #546C23;
+    border: 3px solid #779A32;
 }
 QPushButton[sessionbutton="true"]:hover {
     border: 3px solid #E6F0D1;
 }
 QLineEdit[searchbar="true"] {
-    /* max-width: 120px;
-    min-width: 120px; */
     max-height: 30px;
     min-height: 30px;
 
