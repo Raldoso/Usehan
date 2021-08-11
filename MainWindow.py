@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from modules.functions import *
 from modules.custom_widgets.LinkContainer import Link_container
 from modules.custom_widgets.resize_grid import SideGrip
+from modules.custom_widgets.hover_widget import Hovered_Widget
 import sys
 
 app = QApplication(sys.argv)
@@ -182,12 +183,13 @@ class Window(QMainWindow):
         self.titleLayout.setAlignment(titletext,Qt.AlignLeft)
         self.titleLayout.setAlignment(Qt.AlignVCenter)
 
-        title = QWidget()
-        title.setProperty("titlebar","true")
-        title.setLayout(self.titleLayout)
+        self.title = Hovered_Widget()
+        #self.title.setStyleSheet("background-color: #40531B;")
+        #self.title.setProperty("titlebar","true")
+        self.title.setLayout(self.titleLayout)
 
         #ROOT VIEW
-        self.rootLayout.addWidget(title)
+        self.rootLayout.addWidget(self.title)
         self.rootLayout.addWidget(content)
 
         root = QWidget()
@@ -195,17 +197,17 @@ class Window(QMainWindow):
         
         #END
         self.setCentralWidget(root)
-
+   
     #DETECT WINDOW POSITION WHEN MOUSE PRESSED
     def mousePressEvent(self, event):
-        print(QApplication.focusWidget().text())
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton and self.title.hoverstate == True:
             self.offset = event.pos()
         else:
+            self.offset = None
             super().mousePressEvent(event)
     #CHANGE WINDOW POSITION RELATIVE TO MOUSE POSITION
     def mouseMoveEvent(self, event):
-        if self.offset is not None and event.buttons() == Qt.LeftButton:
+        if self.offset is not None and event.buttons() == Qt.LeftButton and self.title.hoverstate == True:
             self.move(self.pos() + event.pos() - self.offset)
         else:
             super().mouseMoveEvent(event)
@@ -214,7 +216,7 @@ class Window(QMainWindow):
         self.offset = None
         super().mouseReleaseEvent(event)
 
-        
+
     #READ DATA FROM DAATBASE AND SHOW IT
     def initSession(self):
 
@@ -301,9 +303,6 @@ class Window(QMainWindow):
     def resizeEvent(self, event):
         QMainWindow.resizeEvent(self, event)
         self.updateGrips()
-
-
-         
 
 
 #Apply stylesheet

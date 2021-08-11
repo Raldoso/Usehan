@@ -6,8 +6,8 @@ QWidget[SessionLayout="true"] {
     max-width: 190;
     min-width: 190;
 }
-QWidget[titlebar="true"] {
-    background-color: #40531B;
+.QWidget[titlebar="true"] {
+    background-color: #a0531B;
     max-height: 40px;
     min-height: 40px;
 }
