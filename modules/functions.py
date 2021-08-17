@@ -10,7 +10,7 @@ import snoop
 import json
 import os
 
-#######CONSTANTS######
+#######APP ICON PATHS######
 path = os.path.normpath(__file__).split(os.sep)
 path.pop(-1)
 path.pop(-1)
@@ -18,7 +18,9 @@ path = "\\".join(path)
 
 DIRPATH = path
 DELETE_URL = os.path.join(DIRPATH,r"Images\jokuka.png")
+RESTORE_TITLE = os.path.join(DIRPATH,r"Images\refresh2.png")
 SETTINGS = os.path.join(DIRPATH,r"Images\settings3.png")
+SETTINGS_HOVER = os.path.join(DIRPATH,r"Images\settings3hover.png")
 CHECK_URL = os.path.join(DIRPATH,r"Images\csek3.png")
 UNCHECK_URL = os.path.join(DIRPATH,r"Images\uncsek4.png")
 WINDOW_ICON = os.path.join(DIRPATH,r"Images\windowicon.png")
@@ -30,15 +32,14 @@ NOT_LAUNCH_LINK_HOVER = os.path.join(DIRPATH,r"Images\notikboxhover.png")
 DATABASE = os.path.join(DIRPATH,r"links.json")
 ICON_DATABASE = os.path.join(DIRPATH,r"icons")
 
-######FUNCTIONS######
+######GLOBAL APP FUNCTIONS######
 def relpath(path): #working with relatve paths with current script
     return os.path.join(DIRPATH,path)
 
-def hash_title(text):
+def hash_url(text): #return hashed string
     return str(hashlib.sha1(bytes(text,"utf-8")).hexdigest())
 
-def get_url_title(website_url:str) -> str:
-    #return websites title in string format by URL path
+def get_url_title(website_url:str) -> str: #Returns websites titles in string format with URL path
 
     # get webpage data without error 403 with headers
     soup = BeautifulSoup(urlopen(Request(website_url,headers={"User-Agent": "Mozilla/5.0"})),"html.parser")
@@ -46,9 +47,7 @@ def get_url_title(website_url:str) -> str:
     # displaying the title
     return soup.title.get_text()
 
-def download_url_icon(website_url:str) -> None:
-    #donwloading the icon of a website by its URL.
-    #Possible formats are PNG, ICO
+def download_url_icon(website_url:str) -> None: #DOWLOAD LINK ICON WITH URL AND SAVE WITH HASHED NAME
 
     icons = favicon.get(website_url)
 
@@ -66,7 +65,7 @@ def download_url_icon(website_url:str) -> None:
             print("No PNG or ICO format")
             return
 
-        hashname = hash_title(website_url)
+        hashname = hash_url(website_url)
 
         response = requests.get(icon, stream=True)
         #catch request reject
@@ -83,8 +82,7 @@ def download_url_icon(website_url:str) -> None:
     else:
         print(f"We cannot find any available icon file for url: {website_url}")
 
-def donwload_link(url:str,session=str,database=None) -> None:
-    #download link icon and parse the data into the global database
+def donwload_link(url:str,session=str,database=dict) -> None: #DOWNLOAD ICON AND PARSE DATA INTO DATABASE
 
     download_url_icon(url)
     title = get_url_title(url)
@@ -100,32 +98,32 @@ def donwload_link(url:str,session=str,database=None) -> None:
     with open(DATABASE,"w") as file:
         json.dump(database, file, indent=4)
 
-def delete_link(title:str,session:str,database=None) -> None:
-    #delete link from database and save it and delete iconfile also
+def delete_link(url:str,session:str,database=dict) -> None: #DELETE LINK, SAVE DATABSE, DELETE ICON
 
     for link in database[session]:
-        if link["title"] == title:
+        if link["url"] == url:
             database[session].remove(link)
 
     json.dump(database, open(DATABASE,"w"),indent=4)
 
-    os.remove(os.path.join(ICON_DATABASE,f"{hash_title(title)}.png"))
+    if os.path.exists(os.path.join(ICON_DATABASE,f"{hash_url(url)}.png")):
+        os.remove(os.path.join(ICON_DATABASE,f"{hash_url(url)}.png"))
 
-def modify_url(oldurl:str, newurl:str,session:str, database=None) -> None:
+def modify_url(oldurl:str, newurl:str,session:str, database=dict) -> None: #CHANGE STORED URL AND SAVE
     
     for i in range(database[session]):
         if database[session][i]["url"] == oldurl:
             database[session][i]["url"] = newurl
 
     #link icon needs to be renamed to the new title
-    if os.path.exists(os.path.join(ICON_DATABASE,f"{hash_title(oldurl)}.png")):
+    if os.path.exists(os.path.join(ICON_DATABASE,f"{hash_url(oldurl)}.png")):
         os.rename(
-            os.path.join(ICON_DATABASE,f"{hash_title(oldurl)}.png"),
-            os.path.join(ICON_DATABASE, f"{hash_title(newurl)}.png"))
+            os.path.join(ICON_DATABASE,f"{hash_url(oldurl)}.png"),
+            os.path.join(ICON_DATABASE, f"{hash_url(newurl)}.png"))
 
     json.dump(database, open(DATABASE,"w"),indent=4)
 
-def modify_title(oldtitle:str, newtitle:str, session:str, database=None) -> None:
+def modify_title(oldtitle:str, newtitle:str, session:str, database=dict) -> None: #CHANGE STORED TITLE AND SAVE
 
     for i in range(len(database[session])):
         if database[session][i]["title"] == oldtitle:
@@ -136,12 +134,10 @@ def modify_title(oldtitle:str, newtitle:str, session:str, database=None) -> None
 
 
 if __name__ == '__main__':
-    """ 
-    file = json.load(open(DATABASE,"r"))
-    for i in file.values(): #session
-        for lin in i:
-            download_url_icon(lin["url"])
-            print("Downloaded") """
+    database = json.load(open(DATABASE,"r"))
+    #print(database)
+    #delete_link("https://realpython.com/pyinstaller-python/","Embedd Python",database)
+    donwload_link("https://boardsource.xyz/store","Buy keyboard",database)
 
 
 

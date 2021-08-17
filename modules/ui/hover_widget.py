@@ -11,9 +11,12 @@ class Hovered_Widget(QWidget):
         self.hoverstate =  False
         self.prev_state = False
         self.setAttribute(Qt.WA_Hover)
-        self.setFixedHeight(40)
-
-        self.setStyleSheet("background-color: #40531B")
+        self.setStyleSheet("""
+                QWidget:hover{
+                    background-color: #ffffff;
+                    /*border: 3px solid #E6F0D1;*/
+                    
+                    }""")
 
     def event(self, event):
         if event.type() == QEvent.HoverEnter:

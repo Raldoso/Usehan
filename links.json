@@ -11,17 +11,9 @@
         {
             "url": "https://docs.github.com/en/github/getting-started-with-github/why-is-git-always-asking-for-my-password",
             "title": "Why is Git always asking for my password? - GitHub Docs"
-        },
-        {
-            "url": "https://www.etsy.com/listing/549370705/custom-sublimation-transfers-sheets-up",
-            "title": "Custom SUBLIMATION Transfers Sheets up to 24 x | Etsy"
         }
     ],
     "Buy keyboard": [
-        {
-            "url": "https://boardsource.xyz/store",
-            "title": "Boardsource - Store"
-        },
         {
             "url": "https://mechboards.co.uk/",
             "title": "Home \u2014 Mechboards"
@@ -29,6 +21,10 @@
         {
             "url": "https://www.solutionsinplastic.com/keycap-manufacturing/",
             "title": "Keycap Manufacturing \u2013 Signature Plastics"
+        },
+        {
+            "url": "https://boardsource.xyz/store",
+            "title": "Boardsource - Store"
         }
     ],
     "Vim learn": [
@@ -57,10 +53,6 @@
         {
             "url": "https://stackoverflow.com/questions/13327280/creating-dll-from-a-python-file/13327324",
             "title": "Creating .dll from a Python file - Stack Overflow"
-        },
-        {
-            "url": "https://realpython.com/pyinstaller-python/",
-            "title": "Using PyInstaller to Easily Distribute Python Applications \u2013 Real Python"
         }
     ]
 }

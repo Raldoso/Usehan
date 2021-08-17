@@ -2,30 +2,31 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from modules.functions import *
-from modules.custom_widgets.LinkContainer import Link_container
-from modules.custom_widgets.resize_grid import SideGrip
-from modules.custom_widgets.hover_widget import Hovered_Widget
+from modules.ui.LinkContainer import Link_container
+from modules.ui.resize_grid import SideGrip
+from modules.ui.hover_widget import Hovered_Widget
 import sys
 
 app = QApplication(sys.argv)
 data = json.load(open(DATABASE,"r"))
 
 class Window(QMainWindow):
-    #_gripSize = 1
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("My App")
         self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setMinimumWidth(600)
         self.buttons = []
 
+        #init resize grips
         self.gripSize = 4
         self.sideGrips = [
             SideGrip(self, Qt.LeftEdge), 
             SideGrip(self, Qt.TopEdge), 
             SideGrip(self, Qt.RightEdge), 
             SideGrip(self, Qt.BottomEdge), 
-        ]
+            ]
         # corner grips should be "on top" of everything, otherwise the side grips
         # will take precedence on mouse events, so we are adding them *after*;
         # alternatively, widget.raise_() can be used
@@ -35,6 +36,7 @@ class Window(QMainWindow):
         self.initUI()
         self.initSession()
 
+    #INITIALISATION
     def LayoutInit(self):
         
         self.rootLayout = QVBoxLayout()
@@ -74,7 +76,6 @@ class Window(QMainWindow):
         self.contentLinkLayout.setContentsMargins(0,0,0,0)
         self.contentLinkLayout.setSpacing(5)
         self.contentLinkLayout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-
     def initUI(self):
 
         #SESSION VIEW
@@ -94,7 +95,6 @@ class Window(QMainWindow):
         tabs.setLayout(self.tabLayout)
 
         #CONTENT TITLE VIEW
-        
         launch = QPushButton()
         launch.clicked.connect(self.launch)
         launch.setText("Launch")
@@ -118,24 +118,26 @@ class Window(QMainWindow):
                 border: 3px solid #E6F0D1;
                 }""")
 
-        #TODO fix url
         sessionSettings = QPushButton()
-        sessionSettings.setCheckable(False)
+        sessionSettings.setCheckable(True)
         sessionSettings.setStyleSheet("""
             QPushButton{
-                max-height: 40px; 
-                min-height: 40px;
-                max-width: 40px;
-                min-width: 40px;
-                border-top-right-radius: 20px;
-                border-bottom-right-radius: 20px;
-                margin: 15 0 20 8;
-                background: #779A32 url(C:/Users/borhe/Downloads/ItWork/Projects/Usehan/Usehan/Images/settings3.png) no-repeat center center;
-            }
-            QPushButton:hover {
-                background: #779A32 url(C:/Users/borhe/Downloads/ItWork/Projects/Usehan/Usehan/Images/settings3hover.png) no-repeat center center;
-            }
-        """)
+                    max-height: 40px; 
+                    min-height: 40px;
+                    max-width: 40px;
+                    min-width: 40px;
+                    border-top-right-radius: 20px;
+                    border-bottom-right-radius: 20px;
+                    margin: 15 0 20 8;
+                    background: #779A32 url(Images/settings3.png) no-repeat center center;
+                }
+                QPushButton:hover{
+                    background: #779A32 url(Images/settings3hover.png) no-repeat center center;
+                }
+                QPushButton:checked{
+                    background: #779A32 url(Images/settings3hoverotate.png) no-repeat center center;
+                }
+            """)
 
         self.contentTitleLayout.addWidget(launch)
         self.contentTitleLayout.addWidget(sessionSettings)
@@ -165,27 +167,39 @@ class Window(QMainWindow):
         #TITLEBAR VIEW
         titletext = QLabel()
         titletext.setStyleSheet(""" 
-            QLabel {
-                color: #E6F0D1;
-                margin-left: 5px;
-                font-size: 30px;
-                font-weight: bold;
-                }""")
+                QLabel {
+                    color: #E6F0D1;
+                    background-color: #40531B;
+                    margin-left: 5px;
+                    font-size: 30px;
+                    font-weight: bold;
+                    }""")
         titletext.setText("Usehan")
 
         exitbutton = QPushButton()
         exitbutton.setText("X")
         exitbutton.clicked.connect(lambda: sys.exit())
-        exitbutton.setProperty("exit","true")
+        exitbutton.setStyleSheet("""
+                QPushButton{
+                    max-width: 40px;
+                    min-width: 40px;
+                    max-height: 40px;
+                    min-height: 40px;
+                    color: #E6F0D1;
+                    font-weight: bold;
+                    font-family: Eras Bold ITC;
+                    font-size: 20px;
+                    background-color: #779A32;
+                }
+                QPushButton:hover {
+                    border: 3px solid #E6F0D1;
+                }""")
 
-        self.titleLayout.addWidget(titletext)
-        self.titleLayout.addWidget(exitbutton)
-        self.titleLayout.setAlignment(titletext,Qt.AlignLeft)
-        self.titleLayout.setAlignment(Qt.AlignVCenter)
+        self.titleLayout.addWidget(titletext,Qt.AlignVCenter,Qt.AlignLeft)
+        self.titleLayout.addWidget(exitbutton,Qt.AlignVCenter,Qt.AlignRight)
 
         self.title = Hovered_Widget()
-        #self.title.setStyleSheet("background-color: #40531B;")
-        #self.title.setProperty("titlebar","true")
+        self.title.setFixedHeight(40)
         self.title.setLayout(self.titleLayout)
 
         #ROOT VIEW
@@ -197,28 +211,25 @@ class Window(QMainWindow):
         
         #END
         self.setCentralWidget(root)
-   
-    #DETECT WINDOW POSITION WHEN MOUSE PRESSED
-    def mousePressEvent(self, event):
+
+    #WINDOW MOVEMENT MANEGEMENT
+    def mousePressEvent(self, event): #DETECT WINDOW POSITION WHEN MOUSE PRESSED
         if event.button() == Qt.LeftButton and self.title.hoverstate == True:
             self.offset = event.pos()
         else:
             self.offset = None
             super().mousePressEvent(event)
-    #CHANGE WINDOW POSITION RELATIVE TO MOUSE POSITION
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event):  #CHANGE WINDOW POSITION RELATIVE TO MOUSE POSITION
         if self.offset is not None and event.buttons() == Qt.LeftButton and self.title.hoverstate == True:
             self.move(self.pos() + event.pos() - self.offset)
         else:
             super().mouseMoveEvent(event)
-    #SET BACK EVERYTHING TO DEFAULT
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event): #SET BACK EVERYTHING TO DEFAULT
         self.offset = None
         super().mouseReleaseEvent(event)
 
-
-    #READ DATA FROM DAATBASE AND SHOW IT
-    def initSession(self):
+    #SESSION FUNCTION MANEGEMENT
+    def initSession(self): #READ SESSION NAMES FROM DATABASE AND SHOW IT
 
         titles = [title for title in data.keys()]
         titles.sort()
@@ -234,8 +245,7 @@ class Window(QMainWindow):
                 button.setProperty("sessionbutton","true")
                 self.SessionLayout.addWidget(button)
                 self.buttons.append(button)
-
-    def session_clicked(self):
+    def session_clicked(self): #CLICKING ON SESION WILL FILL CONTENT WITH LINKS
 
         sender = self.sender()
         title = sender.text()
@@ -249,17 +259,17 @@ class Window(QMainWindow):
 
         #clear layout
         for i in reversed(range(self.contentLinkLayout.count())):
-            self.contentLinkLayout.itemAt(i).widget().setParent(None)
+            self.contentLinkLayout.itemAt(i).widget().deleteLater()
 
         #paste new session links
         for link in links:
-            self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"],session = title,database= data))
-
-    def launch(self):
+            self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"],session = title,database = data, rootlayout=self.contentLinkLayout))
+    def launch(self): #LAUNCH SELECTED LINKS IN DEFAULT BROWSER
         for i in reversed(range(self.contentLinkLayout.count())):
             if self.contentLinkLayout.itemAt(i).widget().launchable:
                 webbrowser.open(self.contentLinkLayout.itemAt(i).widget().linktext,new=0, autoraise=True)
 
+    #WINDOW RESIZE MANEGEMENT
     def setGripSize(self, size):
         if size == self._gripSize:
             return

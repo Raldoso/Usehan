@@ -41,20 +41,3 @@ QLineEdit[searchbar="true"] {
 
     border: 0px;
 }
-
-QPushButton[exit="true"]{
-    max-width: 40px;
-    min-width: 40px;
-    max-height: 40px;
-    min-height: 40px;
-
-    color: #E6F0D1;
-    font-weight: bold;
-    font-family: Eras Bold ITC;
-    font-size: 20px;
-
-    background-color: #779A32;
-}
-QPushButton[exit="true"]:hover {
-    border: 3px solid #E6F0D1;
-}
