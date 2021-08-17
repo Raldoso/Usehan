@@ -15,16 +15,16 @@
     ],
     "Buy keyboard": [
         {
-            "url": "https://boardsource.xyz/store",
-            "title": "Boardsource - Store"
-        },
-        {
             "url": "https://mechboards.co.uk/",
             "title": "Home \u2014 Mechboards"
         },
         {
             "url": "https://www.solutionsinplastic.com/keycap-manufacturing/",
             "title": "Keycap Manufacturing \u2013 Signature Plastics"
+        },
+        {
+            "url": "https://boardsource.xyz/store",
+            "title": "Boardsource - Store"
         }
     ],
     "Vim learn": [
@@ -53,10 +53,6 @@
         {
             "url": "https://stackoverflow.com/questions/13327280/creating-dll-from-a-python-file/13327324",
             "title": "Creating .dll from a Python file - Stack Overflow"
-        },
-        {
-            "url": "https://realpython.com/pyinstaller-python/",
-            "title": "Using PyInstaller to Easily Distribute Python Applications \u2013 Real Python"
         }
     ]
 }
