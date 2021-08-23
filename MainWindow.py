@@ -5,6 +5,8 @@ from modules.functions import *
 from modules.ui.LinkContainer import Link_container
 from modules.ui.resize_grid import SideGrip
 from modules.ui.hover_widget import Hovered_Widget
+from modules.ui.new_things import newLink, newLinkEdit, newSession, newSessionEdit
+from modules.ui.settings import SessionSettingsContainer
 import sys
 
 app = QApplication(sys.argv)
@@ -16,8 +18,11 @@ class Window(QMainWindow):
 
         self.setWindowTitle("My App")
         self.setWindowFlags(Qt.FramelessWindowHint)
+        
+ 
         self.setMinimumWidth(600)
         self.buttons = []
+        self.current_session = ""
 
         #init resize grips
         self.gripSize = 4
@@ -36,7 +41,7 @@ class Window(QMainWindow):
         self.initUI()
         self.initSession()
 
-    #INITIALISATION
+    #INITIALISATIONS
     def LayoutInit(self):
         
         self.rootLayout = QVBoxLayout()
@@ -118,9 +123,11 @@ class Window(QMainWindow):
                 border: 3px solid #E6F0D1;
                 }""")
 
-        sessionSettings = QPushButton()
-        sessionSettings.setCheckable(True)
-        sessionSettings.setStyleSheet("""
+        #EXCEPTION ABOUT self.
+        self.sessionSettings = QPushButton()
+        self.sessionSettings.setCheckable(True)
+        self.sessionSettings.clicked.connect(self.showSessionSettings)
+        self.sessionSettings.setStyleSheet("""
             QPushButton{
                     max-height: 40px; 
                     min-height: 40px;
@@ -139,13 +146,19 @@ class Window(QMainWindow):
                 }
             """)
 
+        #EXCEPTION ABOUT self.
+        self.new_link = newLink()
+        self.new_link.setDisabled(True)
+        self.new_link.clicked.connect(self.addnewLink)
+
         self.contentTitleLayout.addWidget(launch)
-        self.contentTitleLayout.addWidget(sessionSettings)
+        self.contentTitleLayout.addWidget(self.sessionSettings)
+        self.contentTitleLayout.addWidget(self.new_link,Qt.AlignCenter,Qt.AlignRight)
 
         contentTitle = QWidget()
         contentTitle.setLayout(self.contentTitleLayout)
-        #CONTENT LINK VIEW
 
+        #CONTENT LINK VIEW
         contentLink = QWidget()
         contentLink.setLayout(self.contentLinkLayout)
 
@@ -197,7 +210,7 @@ class Window(QMainWindow):
 
         self.titleLayout.addWidget(titletext,Qt.AlignVCenter,Qt.AlignLeft)
         self.titleLayout.addWidget(exitbutton,Qt.AlignVCenter,Qt.AlignRight)
-
+        #EXCEPTION ABOUT self.
         self.title = Hovered_Widget()
         self.title.setFixedHeight(40)
         self.title.setLayout(self.titleLayout)
@@ -213,13 +226,20 @@ class Window(QMainWindow):
         self.setCentralWidget(root)
 
     #WINDOW MOVEMENT MANEGEMENT
-    def mousePressEvent(self, event): #DETECT WINDOW POSITION WHEN MOUSE PRESSED
+    def mousePressEvent(self, event):   #DETECT WINDOW POSITION WHEN MOUSE PRESSED
         if event.button() == Qt.LeftButton and self.title.hoverstate == True:
             self.offset = event.pos()
         else:
             self.offset = None
             super().mousePressEvent(event)
-    def mouseMoveEvent(self, event):  #CHANGE WINDOW POSITION RELATIVE TO MOUSE POSITION
+    def mouseMoveEvent(self, event):    #CHANGE WINDOW POSITION RELATIVE TO MOUSE POSITION
+
+        #not proud
+        try:
+            self.offset
+        except:
+            self.offset = None
+        
         if self.offset is not None and event.buttons() == Qt.LeftButton and self.title.hoverstate == True:
             self.move(self.pos() + event.pos() - self.offset)
         else:
@@ -228,8 +248,21 @@ class Window(QMainWindow):
         self.offset = None
         super().mouseReleaseEvent(event)
 
+    #DOWNLOAD AND APPEND A NEW LINK TO UI AND database
+    def addnewLink(self):
+        current_session = ""
+        for i in self.buttons:
+            if i.isChecked():
+                current_session = i.text()
+
+        self.newinput = newLinkEdit(current_session,data,self.contentLinkLayout)
+
+        self.newinput.move(self.geometry().x()+self.width()//2, self.geometry().y()+self.height()//2)
+        self.newinput.show()
+        #new_link_container = Link_container()
+
     #SESSION FUNCTION MANEGEMENT
-    def initSession(self): #READ SESSION NAMES FROM DATABASE AND SHOW IT
+    def initSession(self):     #READ SESSION NAMES FROM DATABASE AND SHOW IT
 
         titles = [title for title in data.keys()]
         titles.sort()
@@ -245,10 +278,20 @@ class Window(QMainWindow):
                 button.setProperty("sessionbutton","true")
                 self.SessionLayout.addWidget(button)
                 self.buttons.append(button)
+
+        self.NewSesBtn = newSession()
+        self.NewSesBtn.clicked.connect(self.initNewSessions)
+        self.SessionLayout.addWidget(self.NewSesBtn)
+
+        self.NewSesEdit = newSessionEdit()
+        self.NewSesEdit.returnPressed.connect(self.createNewSession)
     def session_clicked(self): #CLICKING ON SESION WILL FILL CONTENT WITH LINKS
+
+        self.new_link.setDisabled(False)
 
         sender = self.sender()
         title = sender.text()
+        self.current_session = sender.text()
         links = data[title]
 
         #sessionbuttom style change
@@ -264,10 +307,41 @@ class Window(QMainWindow):
         #paste new session links
         for link in links:
             self.contentLinkLayout.addWidget(Link_container(link["title"],link["url"],session = title,database = data, rootlayout=self.contentLinkLayout))
-    def launch(self): #LAUNCH SELECTED LINKS IN DEFAULT BROWSER
+    def launch(self):          #LAUNCH SELECTED LINKS IN DEFAULT BROWSER
         for i in reversed(range(self.contentLinkLayout.count())):
             if self.contentLinkLayout.itemAt(i).widget().launchable:
                 webbrowser.open(self.contentLinkLayout.itemAt(i).widget().linktext,new=0, autoraise=True)
+    def initNewSessions(self): #CREATE LINEEDIT FOR SESSION NAME ENTERING
+        self.SessionLayout.itemAt(self.SessionLayout.count()-1).widget().deleteLater()
+        self.SessionLayout.addWidget(self.NewSesEdit)
+    def createNewSession(self):#CREATE FINAL SESSION BUTTON AND DELETE LINEEDIT
+        save_new_session(self.NewSesEdit.text(),data)
+
+        button = QPushButton(self.NewSesEdit.text())
+        button.setCheckable(True)
+        button.clicked.connect(self.session_clicked)
+        button.setProperty("sessionbutton","true")
+        self.buttons.append(button)
+
+        #add final session button to layout
+        self.SessionLayout.itemAt(self.SessionLayout.count()-1).widget().deleteLater()
+        self.SessionLayout.addWidget(button)
+
+        #create new newses button for future session creations
+        self.NewSesBtn = newSession()
+        self.NewSesBtn.clicked.connect(self.initNewSessions)
+        self.NewSesEdit = newSessionEdit()
+        self.NewSesEdit.returnPressed.connect(self.createNewSession)
+        self.SessionLayout.addWidget(self.NewSesBtn)
+    def showSessionSettings(self):
+        self.settings = SessionSettingsContainer(self.current_session,data,self.contentLinkLayout,self.SessionLayout,self.buttons)
+        corx = self.mapToGlobal(self.sessionSettings.pos()).x()
+        cory = self.mapToGlobal(self.sessionSettings.pos()).y()
+        if self.sessionSettings.isChecked():
+            self.settings.move(QPoint(corx,cory+30))
+            self.settings.show()
+        else:
+            self.settings.deleteLater()
 
     #WINDOW RESIZE MANEGEMENT
     def setGripSize(self, size):
