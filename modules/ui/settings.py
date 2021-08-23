@@ -4,9 +4,7 @@ from PyQt5.QtGui import *
 import os
 import sys
 
-#COULDNT FIGURE OUT A WORKING RELATIVE IMPORT SO I USE THIS
-sys.path.insert(0, "\\".join(os.path.normpath(__file__).split(os.sep)[:-2])) 
-from functions import *
+from ..functions import *
 
 
 class settingsButton(QPushButton):
@@ -65,6 +63,46 @@ class settingsButton(QPushButton):
 
         self.setLayout(self.content)
 
+class SessionSettingsContainer(QWidget):
+    def __init__(self,session,database,linklayout,sessionlayout,buttons):
+        super().__init__()
+
+        self.setObjectName(u"layout")
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setStyleSheet("""
+            #layout{
+                max-width: 200px;
+                min-width: 200px;
+                background-color: #181F0A;
+            }""")
+
+        self.session = session
+        self.database = database
+        self.linklayout = linklayout
+        self.sessionlayout = sessionlayout
+        self.buttons = buttons
+
+        self.container = QVBoxLayout()
+        self.container.addSpacing(0)
+        self.container.setContentsMargins(0,0,0,0)
+        self.container.setAlignment(Qt.AlignTop)
+
+        self.delete = settingsButton("Delete Session",DELETE_URL)
+        self.delete.clicked.connect(self.DeleteSession)
+
+        self.container.addWidget(self.delete)
+        self.setLayout(self.container)
+
+    def DeleteSession(self):
+        delete_session(self.session,self.database) #UPDATE DATABASE
+        for i in range(self.linklayout.count()): #UPDATE LINKLAYOUT
+            self.linklayout.itemAt(i).widget().deleteLater()
+        for i in range(self.sessionlayout.count()): #DELETE SESSION BUTTONS
+            if self.sessionlayout.itemAt(i).widget().text() == self.session:
+                self.sessionlayout.itemAt(i).widget().deleteLater()
+                self.buttons.remove(self.sessionlayout.itemAt(i).widget())
+
+
 
 class LinkSettingsContainer(QWidget): #POPUP WIDGET FOR LINK MODIFICATIONS
     def __init__(self,titleEdit,url,session,database,rootlayout):
@@ -101,9 +139,6 @@ class LinkSettingsContainer(QWidget): #POPUP WIDGET FOR LINK MODIFICATIONS
 
         self.setLayout(self.container)
 
-
-
-
     def RestoreTitle(self):
         original_title = get_url_title(self.url)
         modify_title(self.title.text(),original_title,self.session,self.database)
@@ -111,7 +146,6 @@ class LinkSettingsContainer(QWidget): #POPUP WIDGET FOR LINK MODIFICATIONS
         
 
     def DeleteLink(self):
-        print("delete")
         delete_link(self.url,self.session,self.database)
         for i in range(self.rootlayout.count()):
             if self.rootlayout.itemAt(i).widget().linktext == self.url:
@@ -138,4 +172,4 @@ if __name__ == "__main__":
     #window = valami()
     #window = LinkSettingsContainer("","")
     #window.show()
-    app.exec_()
+    #app.exec_()
