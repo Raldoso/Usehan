@@ -131,13 +131,24 @@ def modify_title(oldtitle:str, newtitle:str, session:str, database=dict) -> None
 
     json.dump(database, open(DATABASE,"w"),indent=4)
 
+def save_new_session(session:str,database:dict) -> None:
+    database[session] = []
+    json.dump(database, open(DATABASE,"w"),indent=4)
 
+def delete_session(session:str,database:dict) -> None:
+    database.pop(session)
+    
+    json.dump(database, open(DATABASE,"w"),indent=4)
 
 if __name__ == '__main__':
     database = json.load(open(DATABASE,"r"))
     #print(database)
     #delete_link("https://realpython.com/pyinstaller-python/","Embedd Python",database)
-    donwload_link("https://boardsource.xyz/store","Buy keyboard",database)
+    #donwload_link("https://keycapsss.com/","Buy keyboard",database)
+    #donwload_link("https://splitkb.com/","Buy keyboard",database)
+    print(database)
+    database.pop("proba")
+    print(database)
 
 
 

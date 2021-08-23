@@ -6,35 +6,43 @@
         },
         {
             "url": "https://nicolasbarral.fr/git-novice/08-collab/",
-            "title": "Version Control with Git: Collaborating"
+            "title": "Version Control with Git"
         },
         {
             "url": "https://docs.github.com/en/github/getting-started-with-github/why-is-git-always-asking-for-my-password",
-            "title": "Why is Git always asking for my password? - GitHub Docs"
+            "title": "Why is Git always asking for my password?"
         }
     ],
     "Buy keyboard": [
         {
             "url": "https://mechboards.co.uk/",
-            "title": "Home \u2014 Mechboards"
+            "title": "Mechboards"
         },
         {
             "url": "https://www.solutionsinplastic.com/keycap-manufacturing/",
-            "title": "Keycap Manufacturing \u2013 Signature Plastics"
+            "title": "Keycap Manufacturing"
         },
         {
             "url": "https://boardsource.xyz/store",
             "title": "Boardsource - Store"
+        },
+        {
+            "url": "https://keycapsss.com/",
+            "title": "Keycapsss"
+        },
+        {
+            "url": "https://splitkb.com/",
+            "title": "Split keyboards"
         }
     ],
     "Vim learn": [
         {
             "url": "https://thevaluable.dev/vim-beginner/",
-            "title": "Is Vim Really Not For You? A Beginner Guide"
+            "title": "Vim Beginner Guide"
         },
         {
             "url": "https://danielmiessler.com/study/vim/",
-            "title": "Learn Vim For the Last Time: A Tutorial and Primer | Daniel Miessler"
+            "title": "Learn Vim For the Last Time - Daniel Miessler"
         },
         {
             "url": "https://www.analyticsvidhya.com/blog/2021/03/beginners-guide-to-regular-expressions-in-natural-language-processing/",
@@ -44,15 +52,15 @@
     "Embedd Python": [
         {
             "url": "https://docs.python.org/3/extending/extending.html",
-            "title": "1. Extending Python with C or C++ \u2014 Python 3.9.5 documentation"
+            "title": "Extending Python with C or C++"
         },
         {
             "url": "https://packaging.python.org/guides/packaging-binary-extensions/",
-            "title": "Packaging binary extensions \u2014 Python Packaging User Guide"
+            "title": "Python binary extensions Guide"
         },
         {
             "url": "https://stackoverflow.com/questions/13327280/creating-dll-from-a-python-file/13327324",
-            "title": "Creating .dll from a Python file - Stack Overflow"
+            "title": "Creating .dll from a Python file"
         }
     ]
 }
