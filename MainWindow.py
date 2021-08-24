@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 from modules.functions import *
 from modules.ui.LinkContainer import Link_container
 from modules.ui.resize_grid import SideGrip
@@ -338,7 +338,7 @@ class Window(QMainWindow):
         corx = self.mapToGlobal(self.sessionSettings.pos()).x()
         cory = self.mapToGlobal(self.sessionSettings.pos()).y()
         if self.sessionSettings.isChecked():
-            self.settings.move(QPoint(corx,cory+30))
+            self.settings.move(QPoint(corx+200,cory+105))
             self.settings.show()
         else:
             self.settings.deleteLater()
@@ -389,12 +389,12 @@ class Window(QMainWindow):
         self.updateGrips()
 
 
-#Apply stylesheet
-style1 = open(relpath(r"QSS\widgets.qss"),"r").read()
-style2 = open(relpath(r"QSS\layouts.qss"),"r").read()
-app.setStyleSheet(style1 + style2)
-
-window = Window()
-window.show()
-app.exec_()
+if __name__ == "__main__":
+    #Apply stylesheet
+    style1 = open(relpath(r"QSS\widgets.qss"),"r").read()
+    style2 = open(relpath(r"QSS\layouts.qss"),"r").read()
+    app.setStyleSheet(style1 + style2)
+    window = Window()
+    window.show()
+    app.exec_()
 

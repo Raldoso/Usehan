@@ -3,10 +3,12 @@ import os
 
 base = "Win32GUI"
 
-includefiles = ["QSS","Images","links.json","icons"] #copy needed files
-excludes = ["asyncio","concurrent","email","html","http",
-"lib2to3","multiprocessing","pydoc_data","unittest","distutils","test"]  #unneeded packages
-packages = []  #include python packages
+includefiles = ["QSS","Images","links.json","icons","modules","LICENSE"] #copy needed files
+
+excludes = ["asyncio","concurrent","lib2to3","multiprocessing","pydoc_data","unittest","distutils","test","tkinter","snoop","PySide6","PyQt5"]  #unneeded packages
+
+packages = ["PySide2","urllib","bs4","io","PIL","requests","favicon","hashlib","webbrowser","json","os"]  #include python packages
+
 
 inst_dir = os.path.join(r"C:\Users",os.getlogin(),r"Appdata\Local\Programs\Usehan")
 
