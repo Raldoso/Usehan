@@ -6,12 +6,13 @@ import requests
 import favicon
 import hashlib
 import webbrowser
-import snoop
 import json
 import os
 
 #######APP ICON PATHS######
 path = os.path.normpath(__file__).split(os.sep)
+path.pop(-1)
+path.pop(-1)
 path.pop(-1)
 path.pop(-1)
 path = "\\".join(path)

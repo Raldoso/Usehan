@@ -2,3 +2,4 @@ __pycache__
 icons
 .vscode
 build
+dist
